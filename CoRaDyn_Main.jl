@@ -26,48 +26,22 @@ if(iARG.an=="ExDyn")
 	p = copy(pO);
 	open(string("OUT_ExDyn_",iARG.mm,"_",iARG.ex,"_",iARG.pp,"_",iARG.ax,".txt"), "w") do io
 		writedlm(io, [vcat("FB","rho","time",[string(i) for i in mm.odeNF.syms])],'\t');
-		ssR, soR = fn.RefSS(mm,p,pert,x0FB,x0NF);
+		# Start in steady state conditions
+		fsR, nsR = fn.RefSS(mm,p,pert,x0FB,x0NF);
 		rtol = 1e-12;
-		# Feedback system:
-		syst = mm.odeFB;
-		x = fn.Dyn(syst, p, ssR, 500.0, rtol);
-		if(any(isnan.(x)))
-			writedlm(io, [vcat(1,p[iARG.pp],0,x,"NaN")],'\t');
-		end
-		for i in 1:length(x.t)
-			writedlm(io, [vcat(1,p[iARG.pp],x.t[i],x.u[i],"NaN")],'\t');
-		end
+		# Simulate dynamic response after the perturbation:
 		p[pert.p] *= pert.d;
-		x = fn.Dyn(syst, p, last(x.u), 95000.0, rtol);
-		if(any(isnan.(x)))
-			writedlm(io, [vcat(1,p[iARG.pp],500.0,x,"NaN")],'\t');
-		end
-		for i in 1:length(x.t)
-			writedlm(io, [vcat(1,p[iARG.pp],x.t[i]+500.0,x.u[i],"NaN")],'\t');
-		end
-		ssD = fn.SS(syst, p, ssR, rtol);
-		writedlm(io, [vcat(1,p[iARG.pp],"Inf",ssD,"NaN")],'\t');
+		fdD = fn.Dyn(mm.odeFB, p, fsR, 100000.0, rtol);
+		fsD = fn.SS(mm.odeFB, p, fsR, rtol);
+		ndD = fn.Dyn(mm.odeNF, p, nsR, 100000.0, rtol);
+		nsD = fn.SS(mm.odeNF, p, nsR, rtol);
 		p[pert.p] /= pert.d;
-		# No-Feedback system:
-		syst = mm.odeNF;
-		x = fn.Dyn(syst, p, soR, 500.0, rtol);
-		if(any(isnan.(x)))
-			writedlm(io, [vcat(0,p[iARG.pp],0,x)],'\t');
+		# Calculate and print CoRa:
+		writedlm(io, [vcat(0,mm.outFB(fsR),mm.outNF(nsR),1)],'\t');
+		for i in collect(0.1:0.1:10000.0)
+			writedlm(io, [vcat(i,mm.outFB(fdD(i)),mm.outNF(ndD(i)),fn.CoRa(mm.outFB(fsR),mm.outFB(fdD(i)),mm.outNF(nsR),mm.outNF(ndD(i))))],'\t');
 		end
-		for i in 1:length(x.t)
-			writedlm(io, [vcat(0,p[iARG.pp],x.t[i],x.u[i])],'\t');
-		end
-		p[pert.p] *= pert.d;
-		x = fn.Dyn(syst, p, last(x.u), 95000.0, rtol);
-		if(any(isnan.(x)))
-			writedlm(io, [vcat(0,p[iARG.pp],500.0,x)],'\t');
-		end
-		for i in 1:length(x.t)
-			writedlm(io, [vcat(0,p[iARG.pp],x.t[i]+500.0,x.u[i])],'\t');
-		end
-		soD = fn.SS(syst, p, soR, rtol);
-		writedlm(io, [vcat(0,p[iARG.pp],"Inf",soD)],'\t');
-		p[pert.p] /= pert.d;
+		writedlm(io, [vcat(Inf,mm.outFB(fsD),mm.outNF(nsD),fn.CoRa(mm.outFB(fsR),mm.outFB(fsD),mm.outNF(nsR),mm.outNF(nsD)))],'\t');
 	end
 else
 	println("ERROR: Undetermined analysis. Options: ExDyn")
