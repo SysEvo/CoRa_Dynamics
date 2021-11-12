@@ -20,7 +20,7 @@ if(strcmp(sim.an,'ExDyn'))
     CoRa = x.data(:,4);
     clear x
     
-    tSS = length(t) - max(sum([abs(Yf-Yf(end))<1e-8]),sum([abs(Yn-Yn(end))<1e-8]));
+    tSS = length(t) - max(sum([abs(Yf-Yf(end))/Yf(end)<1e-8]),sum([abs(Yn-Yn(end))/Yn(end)<1e-8]));
     tSS = t(tSS);
     
     fig = figure();

@@ -78,7 +78,7 @@ elseif(iARG.an=="msDyn")
 				fyD = mm.outFB(fdD(i));
 				nyD = mm.outNF(ndD(i));
 				writedlm(io, [vcat(p[pert.c],i,fyD,nyD,fn.CoRa(fyR,fyD,nyR,nyD))],'\t');
-				if(max(abs(fyD-fyF),abs(nyD-nyF))<1e-8)
+				if(max(abs(fyD-fyF)/fyF,abs(nyD-nyF)/nyF)<1e-8)
 					break;
 				end
 			end
