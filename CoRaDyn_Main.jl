@@ -25,7 +25,7 @@ pO = copy(p);
 if(iARG.an=="ExDyn")
 	p = copy(pO);
 	open(string("OUT_ExDyn_",iARG.mm,"_",iARG.ex,"_",iARG.pp,"_",iARG.ax,".txt"), "w") do io
-		writedlm(io, [vcat("time","Y","Ynf","CoRa",'\t');
+		writedlm(io, [vcat("time","Y","Ynf","CoRa")],'\t');
 		# Start in steady state conditions
 		fsR, nsR = fn.RefSS(mm,p,pert,x0FB,x0NF);
 		rtol = 1e-12;
