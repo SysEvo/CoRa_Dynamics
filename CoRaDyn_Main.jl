@@ -24,7 +24,7 @@ pO = copy(p);
 # Calculate dynamic response after a perturbation:
 if(iARG.an=="ExDyn")
 	open(string("OUT_ExDyn_",iARG.mm,"_",iARG.ex,"_",iARG.pp,"_",iARG.ax,".txt"), "w") do io
-		writedlm(io, [vcat("time","Y","nyDf","CoRa")],'\t');
+		writedlm(io, [vcat("time","Y","Ynf","CoRa")],'\t');
 		p = copy(pO);
 		# Start in steady state conditions
 		fsR, nsR = fn.RefSS(mm,p,pert,x0FB,x0NF);
@@ -51,7 +51,7 @@ if(iARG.an=="ExDyn")
 	end
 elseif(iARG.an=="msDyn")
 	open(string("OUT_msDyn_",iARG.mm,"_",iARG.ex,"_",iARG.pp,"_",iARG.ax,".txt"), "w") do io
-		writedlm(io, [vcat("theta","time","Y","nyDf","CoRa")],'\t');
+		writedlm(io, [vcat("theta","time","Y","Ynf","CoRa")],'\t');
 		# Range of parameters to explore:
 		r = 10 .^ collect(pert.r[1]:pert.s:pert.r[2]);
         for i in 1:length(r)
