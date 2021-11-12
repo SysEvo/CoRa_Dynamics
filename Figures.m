@@ -9,7 +9,7 @@ sim.mm = 'ATFv1';       % Label for motif file
 sim.ex = 'Ex01';        % Label for parameters file
 sim.pp = 'mY';          % Label for perturbation type
 sim.ax = 'mY';          % Label for condition/range
-sim.an = 'ExDyn';       % Chose analysis type (Options: ExDyn)
+sim.an = 'msDyn';       % Chose analysis type (Options: ExDyn, msDyn)
 
 %% Load & parse data
 x = importdata(cat(2,'OUT_',sim.an,'_',sim.mm,'_',sim.ex,'_',sim.pp,'_',sim.ax,'.txt'),'\t',1);
@@ -51,6 +51,30 @@ if(strcmp(sim.an,'ExDyn'))
             xlabel('Time (min)')
             xlim([0 tSS])
             ylim([0 1])
+            ylabel('Dynamic CoRa')
+            set(gca,'XGrid','on','YGrid','on')
+            box on
+elseif(strcmp(sim.an,'msDyn'))
+    theta = x.data(:,1);
+    t     = x.data(:,2);
+    Yf    = x.data(:,3);
+    Yn    = x.data(:,4);
+    CoRa  = x.data(:,5);
+    clear x
+    
+    fig = figure();
+    fig.Units = 'inches';
+    fig.PaperPosition = [2 1 3 2.5];
+    fig.Position = fig.PaperPosition;
+    hold on;
+        plot(t,CoRa,...
+            'LineStyle','none','Marker','.','MarkerSize',3,...
+            'Color',[0.6 0.6 0.6])
+        plot(t([CoRa<0]),CoRa([CoRa<0]),...
+            'LineStyle','none','Marker','.','MarkerSize',3,...
+            'Color','r')
+            xlabel('Time (min)')
+            ylim([-0.1 1])
             ylabel('Dynamic CoRa')
             set(gca,'XGrid','on','YGrid','on')
             box on
