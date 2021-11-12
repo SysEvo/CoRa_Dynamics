@@ -31,6 +31,9 @@ if(strcmp(sim.an,'ExDyn'))
     hold on;
         plot(t,Yf,'LineWidth',2,'Color',[1 0.6 0.78])
         plot(t,Yn,'LineWidth',2,'LineStyle','--','Color',[0 0 0])
+        plot([tSS,tSS],[Yf(end),Yn(end)],...
+            'LineStyle','none','Marker','.','MarkerSize',12,...
+            'Color',[0.6 0.6 0.6])
             xlabel('Time (min)')
             xlim([0 tSS])
             ylabel('Output')
@@ -40,12 +43,17 @@ if(strcmp(sim.an,'ExDyn'))
             set(gca,'YScale','log','XGrid','on','YGrid','on')
             box on
     subplot(2,1,2)
+    hold on;
         plot(t,CoRa,'LineWidth',2,'Color',[1 0.6 0.78])
+        plot(tSS,CoRa(end),...
+            'LineStyle','none','Marker','.','MarkerSize',12,...
+            'Color',[0.6 0.6 0.6])
             xlabel('Time (min)')
             xlim([0 tSS])
             ylim([0 1])
             ylabel('Dynamic CoRa')
             set(gca,'XGrid','on','YGrid','on')
+            box on
 else
     'ERROR: Undetermined analysis. Options: ExDyn'
 end
