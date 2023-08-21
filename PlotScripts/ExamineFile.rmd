@@ -1,0 +1,68 @@
+
+```{r}
+setwd("/home/atamayo/Desktop/Mariana/CoRa/Curves/")
+```
+
+```{r}
+OutMultiDynFile <- read.table("./MinModel/OUT_ExMultiDyn_MinModelGi_13-23_Ex01_Ge_Ge.txt", 
+                         sep="\t", header=TRUE, row.names=NULL)
+```
+
+```{r}
+# Data cleansing
+## Adjust column names
+colnames(OutMultiDynFile) <- c(colnames(OutMultiDynFile),"NaN")[-1]
+## Convert data type to factor while keeping original order
+OutMultiDynFile$Ge <- factor(OutMultiDynFile$Ge, levels = unique(OutMultiDynFile$Ge))
+## Split the data set according to the initial value of the perturbed parameter
+SplitDynFile <- split(OutMultiDynFile, OutMultiDynFile$Ge, drop = FALSE)
+```
+
+```{r}
+FB13 <- SplitDynFile$`13.366484676022305`[which(SplitDynFile$`13.366484676022305`$FB == 1), ]
+FB17 <- SplitDynFile$`17.53365756334123`[which(SplitDynFile$`17.53365756334123`$FB == 1), ]
+FB23 <- SplitDynFile$`22.999999999999996`[which(SplitDynFile$`22.999999999999996`$FB == 1), ]
+
+tail(FB13)
+tail(FB17)
+tail(FB23)
+```
+```{r}
+which(SplitDynFile$`13.366484676022305`$time == Inf)
+which(SplitDynFile$`17.53365756334123`$time == Inf)
+which(SplitDynFile$`22.999999999999996`$time == Inf)
+```
+
+
+```{r}
+setdiff(FB13$time, FB17$time)
+setdiff(FB17$time, FB13$time)
+
+which(c(setdiff(FB13$time, FB23$time) == setdiff(FB17$time, FB23$time)) == FALSE)
+
+#setdiff(FB13$time, FB23$time)
+tail(setdiff(FB17$time, FB23$time))
+```
+
+```{r}
+diff <- round(setdiff(FB13$time, FB23$time), 1)
+seq <- round(seq(81594.9, 95500, by = 0.1), 1)
+```
+
+```{r}
+which(c(diff == seq) == FALSE)
+length(diff) == length(seq)
+```
+
+
+```{r}
+DiffFile <-file("DiffFile.txt")
+write(diff, DiffFile,
+      ncolumns = 10,
+      append = FALSE, sep = "\t")
+close(DiffFile)
+```
+
+
+
+
