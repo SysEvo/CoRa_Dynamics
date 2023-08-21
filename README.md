@@ -1,2 +1,5 @@
-# CoRa_Dynamics
-Developing a framework to evaluate the feedback control effect over a system’s dynamic response to a perturbation. (Based on CoRa --Gómez-Schiavon &amp; El-Samad, 2020--, available here: https://github.com/mgschiavon/CoRa.)
+# CoRa
+
+CoRa is a general framework that quantifies the contribution of a biological feedback control mechanism to adaptation using a mathematically controlled comparison to an identical system that does not contain the feedback. CoRa provides a simple and intuitive metric with broad applicability to biological feedback systems. 
+
+\* _This version is associated to the manuscript for Gómez-Schiavon & El-Samad (2020) bioRxiv preprint._
