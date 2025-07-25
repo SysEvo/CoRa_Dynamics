@@ -2,7 +2,7 @@
        #cd("/home/atamayo/Desktop/Mariana/Final") 
        
        using Pkg; 
-       using BenchmarkTools
+       #using BenchmarkTools
 
        Pkg.activate(".");		    # Activate local environment (requiere '.toml' files)
 	iARG = (mm = "PID",             # Label for motif file
