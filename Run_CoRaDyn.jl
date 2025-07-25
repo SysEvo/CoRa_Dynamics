@@ -1,5 +1,5 @@
 ## Running in julia terminal
-       cd("/home/atamayo/Desktop/Mariana/Final") 
+       #cd("/home/atamayo/Desktop/Mariana/Final") 
        
        using Pkg; 
        using BenchmarkTools
