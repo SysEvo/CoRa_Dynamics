@@ -6,8 +6,8 @@
 
        Pkg.activate(".");		    # Activate local environment (requiere '.toml' files)
 	iARG = (mm = "PID",             # Label for motif file
-       ex = "Fig03D",                    # Label for parameters file
+       ex = "SFig01A",                    # Label for parameters file
        pp = :bC,                       # Label for perturbation type
-       ax = [],                 # Label for condition/environment [:bP, :bD]
-       an = "ExDyn");        # Chose analysis type (Options: ExSSs, ExDyn, CoRams, OptDY)
+       ax = [:bP, :bI, :bD],                 # Label for condition/environment [:bP, :bD]
+       an = "ExMultiSSs_Dyn");        # Chose analysis type (Options: ExSSs, ExDyn, CoRams, OptDY)
        include("./CoRaDyn_Main_v1.jl");
