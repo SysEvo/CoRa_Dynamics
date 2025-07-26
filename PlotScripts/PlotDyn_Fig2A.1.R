@@ -1,5 +1,5 @@
 # NOTE: Change path 
-setwd("/home/atamayo/Desktop/Mariana/Final/OutputFiles/")
+setwd("/Users/mgschiavon/UNAM-LIIGH Dropbox/Mariana Gómez Schiavon/LIIGH/PROJECTS/CoRa Dynamics/CoRa_Dynamics/OutputFiles/")
 
 library(ggplot2)
 library(dplyr)
@@ -43,7 +43,7 @@ plot <- ggplot(DynFB, mapping = aes(time, log10({{Var}}))) +
   theme(line = element_blank(),
         panel.background = element_rect(fill = 'white', color = 'black', linewidth = 2),
         axis.ticks.y.right = element_blank(),
-        axis.ticks = element_line(color = 'black', size = 1),
+        axis.ticks = element_line(color = 'black', linewidth = 1),
         axis.ticks.length = unit(.15, "cm"),
         axis.line.y.right = element_line(colour = "white", 
                                  size = 2, linetype = "solid"),
