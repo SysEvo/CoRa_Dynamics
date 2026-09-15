@@ -50,9 +50,9 @@ Before running an analysis, you need to create the following files:
 
 The parameters required and their format depend on the specific analysis type; see [Analysis Settings](#analysis-settings) below.
 
-After an analysis runs, its output is saved to the `OutputFiles` directory.
+After an analysis runs, its output is saved to the `OutputFiles` directory. If it doesn't already exist at the repository root, create an empty `OutputFiles` directory before running an analysis.
 
-The `InputFiles`, `Library`, and `OutputFiles` used for Tamayo-Luisce & Gómez-Schiavon (2026) are provided in subfolders named `ManuscriptInputFiles`, `ManuscriptLibrary`, and `ManuscriptOutputFiles`. For the code to run, move their contents into the corresponding parent directory (i.e., `InputFiles` or `Library`).
+The `InputFiles` and `Library` files used for Tamayo-Luisce & Gómez-Schiavon (2026) are provided in subfolders named `ManuscriptInputFiles` and `ManuscriptLibrary`. For the code to run, move their contents into the corresponding parent directory (i.e., `InputFiles` or `Library`).
 
 ## Analysis Types
 
@@ -119,25 +119,25 @@ odeNF = @ode_def begin
     dVar2 = equation2
 end Par1 Par2 NameOfConstantInputForLocalAnalogousSystem ...ListOfParameters
 
-# Define the system's output (total controlled variable, XC):
+# Define the system's output (the controlled variable):
 function outFB(steady_state)
-    return steady_state[idx_XC]   # idx_XC = position of the controlled variable in the model equations
+    return steady_state[idx_ctrl]   # idx_ctrl = position of the controlled variable in the model equations
 end;
 function outNF(steady_state)
-    return steady_state[idx_XC]   # same idx_XC as above
+    return steady_state[idx_ctrl]   # same idx_ctrl as above
 end;
 
-# Get the time series for XC:
+# Get the time series for the controlled variable:
 function solFB(dynamics)
-    return dynamics[idx_XC, :]   # same idx_XC as above
+    return dynamics[idx_ctrl, :]   # same idx_ctrl as above
 end;
 function solNF(dynamics)
-    return dynamics[idx_XC, :]   # same idx_XC as above
+    return dynamics[idx_ctrl, :]   # same idx_ctrl as above
 end;
 
 # Define the locally analogous system:
 function localNF(p, steady_state)
-    p[:NameOfConstantInputForLocalAnalogousSystem] = respective_param * steady_state[idx_XC]
+    p[:NameOfConstantInputForLocalAnalogousSystem] = respective_param * steady_state[idx_ctrl]
     # Modify as needed — may involve multiple parameters or none,
     # depending on how the constant input is defined in the model.
 end;
