@@ -16,7 +16,7 @@ include(string("InputFiles/ARGS_",iARG.mm,"_Par_",iARG.ex,".jl"))
 ### Calculate CoRa across a range of conditions/environments 
 if(iARG.an == "ExCoRa") 
     ## Create output file 
-    open(string("OutputFiles/OUT_",iARG.an,"_",iARG.mm,"_",iARG.ex,"_",iARG.pp,"_",iARG.ax,"_",pert.r[1],"-",pert.r[2],".txt"), "w") do outfile1
+    open(string("OutputFiles/",iARG.ex,"_OUT_",iARG.an,"_",iARG.mm,"_",iARG.ex,"_",iARG.pp,"_",iARG.ax,"_",pert.r[1],"-",pert.r[2],".txt"), "w") do outfile1
         ## Generate and write the header row for the output data file 
         writedlm(outfile1, [vcat(iARG.ax,[string("FbR_",i) for i in mm.odeFB.syms],[string("FbD_",i) for i in mm.odeFB.syms],[string("NfR_",i) for i in mm.odeNF.syms],[string("NfD_",i) for i in mm.odeNF.syms],string("CoRa(",iARG.pp,")"))],'\t');
         ## Define the range of conditions/environments over which the model will be evaluated 
@@ -37,7 +37,7 @@ if(iARG.an == "ExCoRa")
 ### Calculate CoRaDyn across a range of parameters (e.g., conditions/environments)
 elseif(iARG.an == "ExCoRaDyn")
     ## Create output file 
-    open(string("OutputFiles/OUT_",iARG.an,"_",iARG.mm,"_",iARG.ex,"_",iARG.pp,"_",iARG.ax[1],"_",pert.r[1],"-",pert.r[2],".txt"), "w") do outfile1
+    open(string("OutputFiles/",iARG.ex,"_OUT_",iARG.an,"_",iARG.mm,"_",iARG.ex,"_",iARG.pp,"_",iARG.ax[1],"_",pert.r[1],"-",pert.r[2],".txt"), "w") do outfile1
         ## Generate and write the header row for the output data file 
         writedlm(outfile1, [vcat(iARG.ax, string("CoRaDyn(",iARG.pp,")"))],'\t');
         ## Define the range of conditions/environments over which the model will be evaluated 
@@ -77,7 +77,7 @@ elseif(iARG.an == "ExCoRaDyn")
 ### Calculate CoRaDyn across a range of evaluation time windows (tspan)
 elseif(iARG.an == "ExCoRaDyn_tspan")
     ## Create output file 
-    open(string("OutputFiles/OUT_",iARG.an,"_",iARG.mm,"_",iARG.ex,"_",iARG.pp, join([string("_", i, p[i]) for i in iARG.ax]),"_tspan",pert.tspan[1],"-",pert.tspan[2],".txt"), "w") do outfile1
+    open(string("OutputFiles/",iARG.ex,"_OUT_",iARG.an,"_",iARG.mm,"_",iARG.ex,"_",iARG.pp, join([string("_", i, p[i]) for i in iARG.ax]),"_tspan",pert.tspan[1],"-",pert.tspan[2],".txt"), "w") do outfile1
         ## Generate and write the header row for the output data file 
         writedlm(outfile1, [vcat("tspan", string("CoRaDyn(",iARG.pp,")"))],'\t');
         ## Set the time intervals (tspan) over which the system response will be evaluated
@@ -97,10 +97,10 @@ elseif(iARG.an == "ExCoRaDyn_tspan")
         p[pert.p] *= pert.d;
         ## Simulate the response of the feedback system following a step perturbation 
         syst = mm.odeFB;
-        yFB = fn.Dyn(syst, p, ssR, maximum(tspan) .+ 1e4, rtol, saveat, tspan);
+        yFB = fn.Dyn(syst, p, ssR, maximum(tspan) .+ 1e4, rtol, pert.saveat, tspan);
         ## Simulate the response of the no-feedback system following a step perturbation
         syst = mm.odeNF;
-        yNF = fn.Dyn(syst, p, soR, maximum(tspan) .+ 1e4, rtol, saveat, tspan);
+        yNF = fn.Dyn(syst, p, soR, maximum(tspan) .+ 1e4, rtol, pert.saveat, tspan);
         ## Revert the perturbation
         p[pert.p] /= pert.d;
         ## Compute CoRaDyn for each time interval (tspan)
@@ -111,10 +111,10 @@ elseif(iARG.an == "ExCoRaDyn_tspan")
             writedlm(outfile1, [vcat(t,CoRaDyn)],'\t');
         end
     end
-### Calculate CoRaDyn while varying multiple parameters and/or evaluation time windows (tspan)
+### Calculate CoRaDyn while varying multiple parameters and/or the evaluation time window (tspan)
 elseif(iARG.an == "ExMultiCoRaDyn")
     ## Create output file 
-    open(string("OutputFiles/OUT_",iARG.an,"_",iARG.mm,join(["_" * string(i) for i in iARG.ax], ""),"_",iARG.pp,"_tspan",join(["-" * string(i) for i in pert.tspan], ""),".txt"), "w") do outfile1
+    open(string("OutputFiles/",iARG.ex,"_OUT_",iARG.an,"_",iARG.mm,join(["_" * string(i) for i in iARG.ax], ""),"_",iARG.pp,"_tspan",join(["-" * string(i) for i in pert.tspan], ""),".txt"), "w") do outfile1
         ## Generate and write the header row for the output data file
         writedlm(outfile1, [vcat("tspan", iARG.ax, string("CoRaDyn(",iARG.pp,")"))],'\t');
         ## Set the time intervals (tspan) over which the system response will be evaluated
@@ -123,7 +123,7 @@ elseif(iARG.an == "ExMultiCoRaDyn")
             tspan = pert.tspan
         # If minimum, maximum, and length are provided, generate a linear range 
         elseif pert.tlog == false
-            tspan = range(pert.tspan[1], pert.tspan[2], length = pert.l);
+            tspan = range(pert.tspan[1], pert.tspan[2], length = pert.l);\
         # If the tlog flag is true create the range with a log scale
         else 
             tspan = 10 .^ range(log10(pert.tspan[1]), log10(pert.tspan[2]), length = pert.l);
@@ -175,7 +175,7 @@ elseif(iARG.an == "ExMultiCoRaDyn")
 ### Obtain system dynamics under specific conditions
 elseif(iARG.an == "ExDyn")
     ## Create output file 
-    open(string("OutputFiles/OUT_",iARG.an,"_", iARG.mm, "_", iARG.ex, "_", iARG.pp, join([string("_", i, p[i]) for i in iARG.ax]), ".txt"), "w") do outfile1
+    open(string("OutputFiles/",iARG.ex,"_OUT_",iARG.an,"_", iARG.mm, "_", iARG.ex, "_", iARG.pp, join([string("_", i, p[i]) for i in iARG.ax]), ".txt"), "w") do outfile1
         ## Generate and write the header row for the output data file
         writedlm(outfile1, [vcat("FB","rho","time",[string(i) for i in mm.odeNF.syms])], '\t');
         ## Find the pre-perturbation steady state of both the feedback (ssR) and no-feedback system (soR)
@@ -236,6 +236,191 @@ elseif(iARG.an == "ExDyn")
                 end
                 ## Revert the perturbation
 		        p[pert.p] /= pert.d;
+            end
+        end
+    end
+### Obtain system dynamics under specific conditions while varying the perturbation size 
+elseif(iARG.an == "ExMultiPertDyn")
+    open(string("OutputFiles/",iARG.ex,"_OUT_",iARG.an,"_",iARG.mm, "_", iARG.ex, "_", iARG.pp, "_", iARG.ax, ".txt"), "w") do outfile1
+        writedlm(outfile1, [vcat("pt", "FB","rho","time",[string(i) for i in mm.odeNF.syms])], '\t');
+        pt = pert.d
+        for j in 1:length(pt)
+            ssR, soR, rtol = fn.SSandCheck(p, x0, 1e-12, mm, pert.p)
+            #This whole part is the feedback one
+            syst = mm.odeFB;
+            x = fn.Dyn(syst, p, ssR, 500.0, rtol, pert.saveat, []);
+            try
+                if(any(isnan.(x)))
+                    writedlm(outfile1, [vcat(pt[j],1,p[iARG.pp],0,x,"NaN")],'\t');
+                end
+            catch
+                for i in 1:length(x.t)
+                    writedlm(outfile1, [vcat(pt[j],1,p[iARG.pp],x.t[i],x.u[i],"NaN")],'\t');
+                end
+                p[pert.p] *= pt[j];
+                x = fn.Dyn(syst, p, last(x.u), pert.tspan, rtol, pert.saveat, []);
+                try
+                    if(any(isnan.(x)))
+                        writedlm(outfile1, [vcat(pt[j],1,p[iARG.pp],500.0,x,"NaN")],'\t');
+                    end
+                catch
+                    for i in 1:length(x.t)
+                        writedlm(outfile1, [vcat(pt[j],1,p[iARG.pp],x.t[i]+500.0,x.u[i],"NaN")],'\t');
+                    end
+                    ssD = fn.SS(syst, p, ssR, rtol)
+                    writedlm(outfile1, [vcat(pt[j],1,p[iARG.pp],"Inf",ssD,"NaN")],'\t');
+                    p[pert.p] /= pt[j];
+                end
+            end
+            #Now this whole thing is going to be the non-feedback one
+            syst = mm.odeNF;
+            x = fn.Dyn(syst, p, ssR, 500.0, rtol, pert.saveat, []);
+            try
+                if(any(isnan.(x)))
+                    writedlm(outfile1, [vcat(pt[j],0,p[iARG.pp],0,x,"NaN")],'\t');
+                end
+            catch
+                for i in 1:length(x.t)
+                    writedlm(outfile1, [vcat(pt[j],0,p[iARG.pp],x.t[i],x.u[i],"NaN")],'\t');
+                end
+                p[pert.p] *= pt[j];
+                x = fn.Dyn(syst, p, last(x.u), pert.tspan, rtol, pert.saveat, []);
+                try
+                    if(any(isnan.(x)))
+                        writedlm(outfile1, [vcat(pt[j],0,p[iARG.pp],500.0,x,"NaN")],'\t');
+                    end
+                catch
+                    for i in 1:length(x.t)
+                        writedlm(outfile1, [vcat(pt[j],0,p[iARG.pp],x.t[i]+500.0,x.u[i],"NaN")],'\t');
+                    end
+                    ssD = fn.SS(syst, p, ssR, rtol)
+                    writedlm(outfile1, [vcat(pt[j],0,p[iARG.pp],"Inf",ssD,"NaN")],'\t');
+                    p[pert.p] /= pt[j];
+                end
+            end
+        end
+    end
+### Calculate CoRaDyn across a range of perturbation sizes 
+elseif(iARG.an == "ExMultiPertCoRaDyn")
+    ## Create output file 
+    open(string("OutputFiles/",iARG.ex,"_OUT_",iARG.an,"_",iARG.mm,join(["_" * string(i) for i in iARG.ax], ""),"_",iARG.pp,"_tspan",join(["-" * string(i) for i in pert.tspan], ""),".txt"), "w") do outfile1
+        ## Generate and write the header row for the output data file
+        writedlm(outfile1, [vcat("tspan", iARG.ax, string("CoRaDyn(",iARG.pp,")"))],'\t');
+        ## Set the time intervals (tspan) over which the system response will be evaluated
+        ## Terminate process if the tspan vector contains more than one value
+        if length(pert.tspan) != 1
+            error("Invalid pert.tspan. This analysis requires a single evaluation time (tspan). Check Pert file.")
+        end
+        tspan = pert.tspan[1]
+        ## Define the range of conditions/environments over which the model will be evaluated 
+        r = range(pert.r[1][1], pert.r[1][2], length=pert.s[1])
+        if length(pert.tspan) != 1
+            error("Invalid pert.r. Only one parameter can be varied in this analysis.")
+        end
+        ## Define the parameter and perturbation size combinations over which the model will be evaluated 
+        comb = vec(collect(Iterators.product(r, pert.d)))
+        for values in comb
+            ## `values` is a 2-tuple: (parameter_value, perturbation_multiplier)
+            pt = values[end]
+            p[pert.c[1]] = values[1]
+            ## Find the pre-perturbation steady state of both the feedback (ssR) and no-feedback system (soR)
+            ssR, soR, rtol = fn.SSandCheck(p, x0, 1e-12, mm, pert.p)
+            ## Continue to the next conditions if the pre-perturbation steady state is not found 
+            if any(isnan, ssR) || any(isinf, ssR) || any(isnan, soR) || any(isinf, soR)
+                println("Skipping parameter set, pre-perturbation steady states have not been found, do not match or contain Inf/-Inf: ", values)
+                # CoRaDyn is NaN for this parameter combination
+                if length(pert.tspan) == 1
+                    writedlm(outfile1, [vcat(tspan,[i for i in values],NaN)],'\t');
+                # CoRaDyn is NaN for this parameter combination accross all evaluated tspan values 
+                else 
+                    writedlm(outfile1, hcat(reshape(tspan, :, 1), repeat(reshape(collect(values), 1, :), length(tspan), 1), fill(NaN, length(tspan), 1)), '\t')
+                end 
+                continue
+            end
+            ## Apply the perturbation
+            p[pert.p] *= pt;
+            ## Simulate the response of the feedback system following a step perturbation 
+            syst = mm.odeFB;
+            yFB = fn.Dyn(syst, p, ssR, maximum(tspan) + 1e4, rtol, pert.saveat, tspan);
+            ## Simulate the response of the no-feedback system following a step perturbation
+            syst = mm.odeNF;
+		    yNF = fn.Dyn(syst, p, soR, maximum(tspan) + 1e4, rtol, pert.saveat, tspan);
+            ## Compute CoRaDyn for each time interval (tspan)
+            for t in tspan 
+                print("\n", t, " ", values, "\n")
+                CoRaDyn = fn.CoRaDyn(t, yFB, ssR, yNF, soR, mm)
+                ## Save computed analysis results into the output file
+                writedlm(outfile1, [vcat(t,[i for i in values],CoRaDyn)],'\t');
+            end
+            ## Revert the perturbation
+            p[pert.p] /= pt;
+            ## Set yFB and yNF to `nothing` to release their references. 
+            # This allows the memory used by the ODE solutions to be reclaimed by the garbage collector.
+            yFB = nothing
+		    yNF = nothing 
+        end
+    end
+### Obtain system dynamics under specific conditions while varying a parameter
+elseif(iARG.an == "ExMultiDyn")
+    open(string("OutputFiles/",iARG.ex,"_OUT_",iARG.an,"_",iARG.mm, "_", pert.r[1], "-", pert.r[2], "_", iARG.ex, "_", iARG.pp, "_", iARG.ax, ".txt"), "w") do outfile1
+        writedlm(outfile1, [vcat("$(iARG.pp)", "FB","rho","time",[string(i) for i in mm.odeNF.syms])], '\t');
+        # r = 10 .^ collect(pert.r[1]:pert.s:pert.r[2]);
+        # r = 10 .^ range(log10(pert.r[1]), log10(pert.r[2]), length = pert.s);
+        r = range(pert.r[1], pert.r[2], length = pert.s);
+        for j in 1:length(r)
+            p[pert.c[1]] = r[j]
+            ssR, soR, rtol = fn.SSandCheck(p, x0, 1e-12, mm, pert.p)
+            #This whole part is the feedback one
+            syst = mm.odeFB;
+            x = fn.Dyn(syst, p, ssR, 500.0, rtol, pert.saveat, []);
+            try
+                if(any(isnan.(x)))
+                    writedlm(outfile1, [vcat(r[j],1,p[iARG.pp],0,x,"NaN")],'\t');
+                end
+            catch
+                for i in 1:length(x.t)
+                    writedlm(outfile1, [vcat(r[j],1,p[iARG.pp],x.t[i],x.u[i],"NaN")],'\t');
+                end
+                p[pert.p] *= pert.d;
+                x = fn.Dyn(syst, p, last(x.u), pert.tspan, rtol, pert.saveat, []);
+                try
+                    if(any(isnan.(x)))
+                        writedlm(outfile1, [vcat(r[j],1,p[iARG.pp],500.0,x,"NaN")],'\t');
+                    end
+                catch
+                    for i in 1:length(x.t)
+                        writedlm(outfile1, [vcat(r[j],1,p[iARG.pp],x.t[i]+500.0,x.u[i],"NaN")],'\t');
+                    end
+                    ssD = fn.SS(syst, p, ssR, rtol)
+                    writedlm(outfile1, [vcat(r[j],1,p[iARG.pp],"Inf",ssD,"NaN")],'\t');
+                    p[pert.p] /= pert.d;
+                end
+            end
+            #Now this whole thing is going to be the non-feedback one
+            syst = mm.odeNF;
+            x = fn.Dyn(syst, p, ssR, 500.0, rtol, pert.saveat, []);
+            try
+                if(any(isnan.(x)))
+                    writedlm(outfile1, [vcat(r[j],0,p[iARG.pp],0,x,"NaN")],'\t');
+                end
+            catch
+                for i in 1:length(x.t)
+                    writedlm(outfile1, [vcat(r[j],0,p[iARG.pp],x.t[i],x.u[i],"NaN")],'\t');
+                end
+                p[pert.p] *= pert.d;
+                x = fn.Dyn(syst, p, last(x.u), pert.tspan, rtol, pert.saveat, []);
+                try
+                    if(any(isnan.(x)))
+                        writedlm(outfile1, [vcat(r[j],0,p[iARG.pp],500.0,x,"NaN")],'\t');
+                    end
+                catch
+                    for i in 1:length(x.t)
+                        writedlm(outfile1, [vcat(r[j],0,p[iARG.pp],x.t[i]+500.0,x.u[i],"NaN")],'\t');
+                    end
+                    ssD = fn.SS(syst, p, ssR, rtol)
+                    writedlm(outfile1, [vcat(r[j],0,p[iARG.pp],"Inf",ssD,"NaN")],'\t');
+                    p[pert.p] /= pert.d;
+                end
             end
         end
     end
