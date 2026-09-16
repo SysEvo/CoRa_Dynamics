@@ -2,7 +2,8 @@
 
 CoRaDyn is a computational framework, built on CoRa (Gómez-Schiavon & El-Samad, 2022), that quantifies the contribution of feedback to a system's response as it unfolds over time, rather than only at steady state. It uses a mathematically controlled comparison against an identical system lacking the feedback. Like CoRa, CoRaDyn provides a simple, intuitive metric with broad applicability to biological feedback systems.
 
-> This version is associated with the manuscript Tamayo-Luisce & Gómez-Schiavon (2026), bioRxiv preprint.
+> This version is associated with the manuscript:
+> Tamayo-Luisce A & Gómez-Schiavon M (2026). *Beyond Steady-State Adaptation: Evaluating the Dynamic Performance of Biological Feedback Control*. Preprint.
 
 ## Table of Contents
 
